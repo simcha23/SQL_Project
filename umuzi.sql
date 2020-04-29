@@ -135,13 +135,13 @@ SELECT * FROM Customers
 //Select only the FirstName records from customer table 
 
 2. 
-SELECT FirstName FROM Customers
+SELECT FirstName, LastName FROM Customers
 
 --------------------------------------------------------------------------------
 //The command show only the name of a customer whose customerID is 1.
 
 3.
-SELECT FirstName FROM Customers WHERE CustomerID = 1
+SELECT FirstName, LastName FROM Customers WHERE CustomerID = 1
 
 --------------------------------------------------------------------------------
 //The command updates only the names of a user with a customerID = 1
