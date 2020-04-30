@@ -1,4 +1,3 @@
--- Adminer 4.7.6 PostgreSQL dump
 -- PART 1 : CREATING A DATABASE
 -- DOCUMENTATION
 
@@ -13,114 +12,92 @@
 
 */
 
-DROP VIEW IF EXISTS "CustomerRecords";
-CREATE TABLE "CustomerRecords" ("customerid" integer, "firstname" character varying(50), "lastname" character varying(50), "gender" character varying, "address" character varying(200), "phone" character varying(10), "email" character varying(100), "city" character varying(20), "country" character varying(50));
+
+CREATE DATABASE umuzi
+
+CREATE TABLE Customers (
+    CustomerID serial PRIMARY KEY,
+    FirstName varchar(50) NOT NULL,
+    LastName varchar(50) NOT NULL,
+    Gender varchar NOT NULL,
+    Address varchar(200),
+    Phone varchar(10),
+    Email varchar(100),
+    City varchar(20),
+    Country varchar(50)
+    
+);
 
 
-DROP VIEW IF EXISTS "RecordsFromCustomer";
-CREATE TABLE "RecordsFromCustomer" ("customerid" integer, "firstname" character varying(50), "lastname" character varying(50), "gender" character varying, "address" character varying(200), "phone" character varying(10), "email" character varying(100), "city" character varying(20), "country" character varying(50));
+CREATE TABLE Employees (
+    EmployeeID serial PRIMARY KEY,
+    FirstName varchar(50) NOT NULL,
+    LastName varchar(50) NOT NULL,
+    Email varchar(100),
+    JobTitle varchar(20)
+    
+);
 
 
-DROP TABLE IF EXISTS "customers";
-DROP SEQUENCE IF EXISTS customers_customerid_seq;
-CREATE SEQUENCE customers_customerid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
-
-CREATE TABLE "public"."customers" (
-    "customerid" integer DEFAULT nextval('customers_customerid_seq') NOT NULL,
-    "firstname" character varying(50) NOT NULL,
-    "lastname" character varying(50) NOT NULL,
-    "gender" character varying NOT NULL,
-    "address" character varying(200),
-    "phone" character varying(10),
-    "email" character varying(100),
-    "city" character varying(20),
-    "country" character varying(50),
-    CONSTRAINT "customers_pkey" PRIMARY KEY ("customerid")
-) WITH (oids = false);
-
-INSERT INTO "customers" ("customerid", "firstname", "lastname", "gender", "address", "phone", "email", "city", "country") VALUES
-(3,	'Leon',	'Glen',	'Male',	'81 Everton Rd,Gillits',	'0820832830',	'Leon@gmail.com',	'Durban',	'South Africa'),
-(4,	'Charl',	'Muller',	'Male',	'290A Dorset Ecke',	'0856872553',	'Charl.muller@yahoo.com',	'Berlin',	'Germany'),
-(5,	'Julia',	'Stein',	'Female',	'2 Wernerring',	'0867244505',	'Js234@yahoo.com',	'Frankfurt',	'South Africa'),
-(1,	'Lerato',	'Mabitso',	'Male',	'284 chaucer st',	'084789657',	'john@gmail.com',	'Johannesburg',	'South Africa');
-
-DROP TABLE IF EXISTS "employees";
-DROP SEQUENCE IF EXISTS employees_employeeid_seq;
-CREATE SEQUENCE employees_employeeid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
-
-CREATE TABLE "public"."employees" (
-    "employeeid" integer DEFAULT nextval('employees_employeeid_seq') NOT NULL,
-    "firstname" character varying(50) NOT NULL,
-    "lastname" character varying(50) NOT NULL,
-    "email" character varying(100),
-    "jobtitle" character varying(20),
-    CONSTRAINT "employees_pkey" PRIMARY KEY ("employeeid")
-) WITH (oids = false);
-
-INSERT INTO "employees" ("employeeid", "firstname", "lastname", "email", "jobtitle") VALUES
-(1,	'Kani',	'Matthew',	'mat@gmail.com',	'Manager'),
-(2,	'Lesly',	'Cronje',	'LesC@gmail.com',	'Clerk'),
-(3,	'Gideon',	'Maduku',	'm@gmail.com',	'Accountant');
-
-DROP TABLE IF EXISTS "orders";
-DROP SEQUENCE IF EXISTS orders_orderid_seq;
-CREATE SEQUENCE orders_orderid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
-
-CREATE TABLE "public"."orders" (
-    "orderid" integer DEFAULT nextval('orders_orderid_seq') NOT NULL,
-    "productid" integer,
-    "paymentid" integer,
-    "fullfilledbyemployeeid" integer,
-    "daterequired" date NOT NULL,
-    "dateshipped" date,
-    "status" character varying(20) NOT NULL,
-    CONSTRAINT "orders_pkey" PRIMARY KEY ("orderid"),
-    CONSTRAINT "orders_fullfilledbyemployeeid_fkey" FOREIGN KEY (fullfilledbyemployeeid) REFERENCES employees(employeeid) NOT DEFERRABLE,
-    CONSTRAINT "orders_paymentid_fkey" FOREIGN KEY (paymentid) REFERENCES payments(paymentid) NOT DEFERRABLE,
-    CONSTRAINT "orders_productid_fkey" FOREIGN KEY (productid) REFERENCES products(productid) NOT DEFERRABLE
-) WITH (oids = false);
-
-INSERT INTO "orders" ("orderid", "productid", "paymentid", "fullfilledbyemployeeid", "daterequired", "dateshipped", "status") VALUES
-(1,	1,	1,	2,	'2020-04-25',	NULL,	'Not shipped'),
-(2,	1,	2,	2,	'2020-04-23',	'2020-04-25',	'Shipped'),
-(3,	3,	3,	3,	'2020-04-28',	NULL,	'Not shipped');
-
-DROP TABLE IF EXISTS "payments";
-DROP SEQUENCE IF EXISTS payments_paymentid_seq;
-CREATE SEQUENCE payments_paymentid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
-
-CREATE TABLE "public"."payments" (
-    "customerid" integer,
-    "paymentid" integer DEFAULT nextval('payments_paymentid_seq') NOT NULL,
-    "paymentdate" date NOT NULL,
-    "amount" numeric NOT NULL,
-    CONSTRAINT "payments_pkey" PRIMARY KEY ("paymentid"),
-    CONSTRAINT "payments_customerid_fkey" FOREIGN KEY (customerid) REFERENCES customers(customerid) NOT DEFERRABLE
-) WITH (oids = false);
-
-INSERT INTO "payments" ("customerid", "paymentid", "paymentdate", "amount") VALUES
-(1,	1,	'2020-04-24',	150.75),
-(3,	3,	'2020-04-24',	700.60),
-(1,	2,	'2020-04-24',	150.75);
-
-DROP TABLE IF EXISTS "products";
-DROP SEQUENCE IF EXISTS products_productid_seq;
-CREATE SEQUENCE products_productid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1;
-
-CREATE TABLE "public"."products" (
-    "productid" integer DEFAULT nextval('products_productid_seq') NOT NULL,
-    "productname" character varying(100) NOT NULL,
-    "description" character varying(300),
-    "buyprice" numeric NOT NULL,
-    CONSTRAINT "products_pkey" PRIMARY KEY ("productid")
-) WITH (oids = false);
-
-INSERT INTO "products" ("productid", "productname", "description", "buyprice") VALUES
-(1,	'Harley Davidson Chopper',	'This replica features working kickstand, front suspension, gear-shift lever',	150.75),
-(2,	'Classic Car',	'Turnable front wheels, steering function',	150.75),
-(3,	'Harley Davidson Chopper',	'Turnable front wheels, steering function',	700.60);
+CREATE TABLE Products (
+    ProductID serial PRIMARY KEY,
+    ProductName varchar(100) NOT NULL,
+    Description varchar(300),
+    BuyPrice numeric NOT NULL
+    
+);
 
 
+CREATE TABLE Payments (
+    CustomerID INTEGER REFERENCES Customers(CustomerID),
+    PaymentID serial PRIMARY KEY,
+    PaymentDate Date NOT NULL,
+    Amount numeric NOT NULL
+    
+);
+
+
+create table Orders(
+    OrderID serial PRIMARY KEY,
+    ProductID INTEGER REFERENCES Products(ProductID),
+    PaymentID INTEGER REFERENCES Payments(PaymentID),
+    FullfilledByEmployeeID INTEGER REFERENCES Employees(EmployeeID),
+    DateRequired Date NOT NULL,
+    DateShipped Date,
+    Status varchar(20) NOT NULL
+)
+
+
+INSERT INTO Customers(FirstName,LastName,Gender,Address,Phone,Email,City,Country)
+VALUES('John','Hibert','Male','284 chaucer st','084789657','john@gmail.com','Johannesburg','South Africa'),
+      ('Thando','Sithole','Female','240 Sect 1','0794445584','thando@gmail.com','Cape Town','South Africa'),
+      ('Leon','Glen','Male','81 Everton Rd,Gillits','0820832830','Leon@gmail.com','Durban','South Africa'),
+      ('Charl','Muller','Male','290A Dorset Ecke','0856872553','Charl.muller@yahoo.com','Berlin','Germany'),
+      ('Julia','Stein','Female','2 Wernerring','0867244505','Js234@yahoo.com','Frankfurt','South Africa');
+
+
+INSERT INTO Employees(FirstName,LastName,Email,JobTitle)
+VALUES('Kani','Matthew','mat@gmail.com','Manager'),
+      ('Lesly','Cronje','LesC@gmail.com','Clerk'),
+      ('Gideon','Maduku','m@gmail.com','Accountant');
+
+
+INSERT INTO Products(ProductName,Description,BuyPrice)
+VALUES('Harley Davidson Chopper','This replica features working kickstand, front suspension, gear-shift lever',150.75), 
+      ('Classic Car','Turnable front wheels, steering function',150.75),
+      ('Harley Davidson Chopper','Turnable front wheels, steering function',700.60);
+
+
+INSERT INTO Payments(CustomerIDPaymentDate,Amount)
+VALUES(1,CURRENT_DATE,150.75), 
+      (1,CURRENT_DATE,150.75),
+      (3,CURRENT_DATE,700.60);
+
+
+INSERT INTO Orders(ProductID,PaymentID,FullfilledByEmployeeID,DateRequired,DateShipped,Status)
+VALUES(1,1,2,'2020-04-25',NULL,'Not shipped'), 
+      (1,2,2,'2020-04-23','2020-04-25','Shipped'),
+      (3,3,3,'2020-04-28',NULL,'Not shipped');
 
 
 -- PART 2: QUERING A DATABASE
